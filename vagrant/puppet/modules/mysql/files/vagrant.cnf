@@ -2,4 +2,3 @@
 # @see http://stackoverflow.com/questions/947299/how-do-i-make-mysqls-now-and-curdate-functions-use-utc
 [mysqld_safe]
 timezone = UTC
-bind-address=0.0.0.0
