@@ -1,0 +1,9 @@
+server {
+	listen 80;
+	server_name _;
+	root /opt/immodispo;
+
+	location / {
+		try_files $uri /index.php;
+	}
+}

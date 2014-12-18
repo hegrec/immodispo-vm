@@ -84,6 +84,66 @@ exec { "install_schema":
   path => ["/bin", "/usr/bin", "/usr/local/bin"]
 }
 
+
+file { "/opt/immodispo":
+    ensure => "directory",
+    owner  => "vagrant",
+    group  => "vagrant",
+    mode   => 777,
+}
+
+file { "/opt/immodispo/listingImages":
+    ensure => "directory",
+    owner  => "vagrant",
+    group  => "vagrant",
+    mode   => 777,
+}
+
+file { "/opt/immodispo/agencyImages":
+    ensure => "directory",
+    owner  => "vagrant",
+    group  => "vagrant",
+    mode   => 777,
+}
+
+
+package { 'nginx':
+	ensure => present,
+	require => Exec['aptGetUpdate'],
+}
+
+
+service { 'nginx':
+	ensure => running,
+	require => Package['nginx'],
+}
+
+file { 'vagrant-nginx':
+	path => '/etc/nginx/sites-available/vagrant',
+	ensure => file,
+    replace => true,
+	require => Package['nginx'],
+	source => 'puppet:///modules/nginx/vagrant',
+    notify => Service['nginx'],
+}
+
+file { 'default-nginx-disable':
+	path => '/etc/nginx/sites-enabled/default',
+	ensure => absent,
+	require => Package['nginx'],
+}
+
+file { 'vagrant-nginx-enable':
+	path => '/etc/nginx/sites-enabled/vagrant',
+	target => '/etc/nginx/sites-available/vagrant',
+	ensure => link,
+	notify => Service['nginx'],
+	require => [
+		File['vagrant-nginx'],
+		File['default-nginx-disable'],
+	],
+}
+
 include apt_update
 include othertools
 include nodejs
